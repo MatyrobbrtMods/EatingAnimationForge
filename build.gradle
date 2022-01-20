@@ -1,0 +1,232 @@
+import se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask
+
+buildscript {
+    repositories {
+        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+		classpath 'org.parchmentmc:librarian:1.+'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+		classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+    }
+}
+
+plugins {
+	id 'org.cadixdev.licenser' version '0.6.1'
+	id 'com.matthewprenger.cursegradle' version '1.4.0'
+	id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '1.71.4'
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
+
+version = "${version}"
+group = 'io.github.matyrobbrt.eatinganimation'
+archivesBaseName = "${mod_id}-${mc_version}"
+
+def props = new Properties()
+if (file(".env").exists()) {
+	file(".env").withInputStream { props.load(it) }
+} else {
+	file("default.env").withInputStream { props.load(it) }
+}
+
+mixin {
+    add sourceSets.main, "eatinganimation.refmap.json"
+    config "eatinganimation.mixins.json"
+    
+    debug.verbose = true
+    debug.export = true
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+sourceSets {
+	main {
+		java {
+			srcDirs = [
+				"$rootDir/src/main/java"
+			]
+		}
+		resources {
+			srcDirs = [
+				"$rootDir/src/main/resources",
+				"$rootDir/src/generated/resources"
+			]
+			exclude '.cache'
+		}
+	}
+}
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+minecraft {
+
+	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    mappings channel: 'parchment', version: '2021.10.17-1.16.5'
+  
+    runs {
+        client {
+            workingDirectory project.file('run/client')
+            arg "-mixin.config=eatinganimation.mixins.json"
+
+            mods {
+                eatinganimation {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+            arg "-mixin.config=eatinganimation.mixins.json"
+
+            mods {
+                eatinganimation {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run/client')
+            arg "-mixin.config=eatinganimation.mixins.json"
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            args '--mod', 'eatinganimation', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                eatinganimation {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+license {
+	header = file("$rootDir/header.txt")
+	properties {
+        name = 'Matyrobbrt'
+        year = 2022
+    }
+
+	include '**/*.java'
+	
+	style {
+    	java = 'JAVADOC'
+    }
+
+    tasks {
+    	main {
+    		files.from files("$rootDir/src/main/java")
+    	}
+    }
+}
+
+
+def replaceResources = tasks.register("replaceResources", Copy) {
+	it.outputs.upToDateWhen { false }
+	//Copy it into the build dir
+	it.from(sourceSets.main.resources) {
+		include "META-INF/mods.toml"
+		expand 'version': version
+	}
+	it.into "$buildDir/resources/main/"
+}
+
+classes.configure {
+	dependsOn(replaceResources)
+}
+
+processResources {
+	duplicatesStrategy(DuplicatesStrategy.WARN)
+	exclude('META-INF/mods.toml')
+	configure { finalizedBy(replaceResources) }
+}
+
+task makeChangelog(type: GitChangelogTask) {
+	fromRepo = file("$projectDir")
+	file = file('changelog.html')
+	untaggedName = "Current release ${version}"
+	fromCommit = "${changelog_commit_start}"
+	toRef = '1.16.x'
+	templateContent = file('changelog.mustache').getText('UTF-8')
+}
+
+curseforge {
+	apiKey = props.getProperty('CURSEFORGE_KEY')
+	project {
+		id = "${curse_project_id}"
+		changelog = file('changelog.html')
+		changelogType = 'html'
+		releaseType = "${release_type}"
+		addGameVersion "${mc_version}"
+	}
+}
+
+afterEvaluate {
+	// tasks.curseforge556554.dependsOn makeChangelog
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+	maven {
+		url "https://dl.cloudsmith.io/public/matyrobbrt/matylib/maven/"
+	}
+	maven {
+	   	name 'tterrag maven'
+	   	url "http://maven.tterrag.com/"
+	   	allowInsecureProtocol = true
+	}
+	maven {
+		url "https://www.cursemaven.com"
+	}
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.23'
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "EatingAnimationForge",
+            "Specification-Vendor": "matyrobbrt",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": "eatinganimation",
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"matyrobbrt",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "MixinConfigs": "eatinganimation.mixins.json"
+        ])
+    }
+    destinationDirectory = file("$rootDir/build-out/${mc_version}/")
+}
+
+jar.finalizedBy('reobfJar') 
+//publish.dependsOn('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}

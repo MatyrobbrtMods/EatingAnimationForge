@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"refmap": "eatinganimation.refmap.json",
+	"package": "io.github.matyrobbrt.eatinganimation.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"client": [
+		"RemoteClientPlayerEntityMixin",
+		"ItemRendererMixin"
+	]
+}
