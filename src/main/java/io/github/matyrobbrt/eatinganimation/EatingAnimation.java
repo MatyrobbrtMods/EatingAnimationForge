@@ -29,23 +29,21 @@ package io.github.matyrobbrt.eatinganimation;
 
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.collect.Lists;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.network.NetworkConstants;
 
 @Mod(EatingAnimation.MOD_ID)
 public class EatingAnimation {
@@ -59,7 +57,7 @@ public class EatingAnimation {
 			Items.HONEY_BOTTLE, Items.MELON_SLICE, Items.MILK_BUCKET, Items.MUSHROOM_STEW, Items.MUTTON,
 			Items.POISONOUS_POTATO, Items.PORKCHOP, Items.POTATO, Items.PUMPKIN_PIE, Items.RABBIT, Items.RABBIT_STEW,
 			Items.BEETROOT_SOUP, Items.ROTTEN_FLESH, Items.SALMON, Items.SPIDER_EYE, Items.SUSPICIOUS_STEW,
-			Items.SWEET_BERRIES, Items.TROPICAL_FISH, Items.ENCHANTED_GOLDEN_APPLE);
+			Items.SWEET_BERRIES, Items.TROPICAL_FISH, Items.ENCHANTED_GOLDEN_APPLE, Items.GLOW_BERRIES);
 
 	public static final String MOD_ID = "eatinganimation";
 
@@ -68,8 +66,8 @@ public class EatingAnimation {
 				EatingAnimation.MOD_ID + "-client.toml");
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
 				() -> () -> new ClientSetup(FMLJavaModLoadingContext.get().getModEventBus()));
-		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST,
-				() -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+				() -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 	}
 
 	public static final class Config {

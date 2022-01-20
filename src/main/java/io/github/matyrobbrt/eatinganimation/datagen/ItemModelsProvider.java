@@ -34,9 +34,9 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import io.github.matyrobbrt.eatinganimation.EatingAnimation;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;

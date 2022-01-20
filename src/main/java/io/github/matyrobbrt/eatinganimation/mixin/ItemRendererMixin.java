@@ -27,6 +27,8 @@
 
 package io.github.matyrobbrt.eatinganimation.mixin;
 
+import java.util.Arrays;
+
 import javax.annotation.Nullable;
 
 import org.spongepowered.asm.mixin.Final;
@@ -36,53 +38,50 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.crash.ReportedException;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.CrashReport;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportedException;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.ItemModelShaper;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import io.github.matyrobbrt.eatinganimation.EatingAnimation;
 import io.github.matyrobbrt.eatinganimation.EatingAnimation.Config;
 
-@SuppressWarnings("deprecation")
 @Mixin(ItemRenderer.class)
-public abstract class ItemRendererMixin implements IResourceManagerReloadListener {
+public abstract class ItemRendererMixin implements ResourceManagerReloadListener {
 
 	@Final
 	@Shadow
-	private ItemModelMesher itemModelShaper;
+	private ItemModelShaper itemModelShaper;
 	@Shadow
 	public float blitOffset;
 
 	@Shadow
-	protected abstract IBakedModel getModel(ItemStack p_184393_1_, @Nullable World p_184393_2_,
-			@Nullable LivingEntity p_184393_3_);
+	protected abstract void renderGuiItem(ItemStack stack, int x, int y, BakedModel model);
 
-	@Shadow
-	protected abstract void renderGuiItem(ItemStack pStack, int pX, int pY, IBakedModel pBakedmodel);
-
-	private IBakedModel transformEatingModel(ItemStack stack, @Nullable World world, @Nullable LivingEntity entity) {
-		final IBakedModel initialModel = this.itemModelShaper.getItemModel(stack);
-		final ClientWorld clientWorld = world instanceof ClientWorld ? (ClientWorld) world : null;
-		final IBakedModel initialOverridenModel = initialModel.getOverrides().resolve(initialModel, stack, clientWorld,
-				entity);
-		IBakedModel transformedModel = checkOverrideContains(initialModel.getOverrides(),
+	private BakedModel transformEatingModel(ItemStack stack, @Nullable Level level, @Nullable LivingEntity entity,
+			int seed) {
+		final BakedModel initialModel = this.itemModelShaper.getItemModel(stack);
+		final ClientLevel clientLevel = level instanceof ClientLevel cl ? cl : null;
+		final BakedModel initialOverridenModel = initialModel.getOverrides().resolve(initialModel, stack, clientLevel,
+				entity, seed);
+		BakedModel transformedModel = checkOverrideContains(initialModel.getOverrides(),
 				new ResourceLocation(EatingAnimation.MOD_ID, "eat")) ? this.itemModelShaper.getItemModel(stack)
 						: initialOverridenModel;
 		return transformedModel == null ? itemModelShaper.getModelManager().getMissingModel() : transformedModel;
 	}
 
-	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/renderer/ItemRenderer;tryRenderGuiItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;II)V", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/renderer/entity/ItemRenderer;tryRenderGuiItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", cancellable = true)
 	private void eatinganimation$tryRenderGuiItem(@Nullable LivingEntity entity, ItemStack stack, int x, int y,
+			int seed,
 			CallbackInfo ci) {
 		if (stack.isEmpty() || !stack.isEdible() || entity == null
 				|| Boolean.TRUE.equals(Config.RENDER_INVENTORY_EATING.get())) {
@@ -90,9 +89,10 @@ public abstract class ItemRendererMixin implements IResourceManagerReloadListene
 		}
 		if (entity.getUseItem() != stack) { return; }
 
-		this.blitOffset += 50.0F;
+		final var model = transformEatingModel(stack, null, entity, seed);
+		this.blitOffset = model.isGui3d() ? this.blitOffset + 50.0F + seed : this.blitOffset + 50.0F;
 		try {
-			this.renderGuiItem(stack, x, y, transformEatingModel(stack, null, entity));
+			this.renderGuiItem(stack, x, y, model);
 		} catch (Throwable throwable) {
 			CrashReport crashreport = CrashReport.forThrowable(throwable, "Rendering item");
 			CrashReportCategory crashreportcategory = crashreport.addCategory("Item being rendered");
@@ -111,12 +111,12 @@ public abstract class ItemRendererMixin implements IResourceManagerReloadListene
 			});
 			throw new ReportedException(crashreport);
 		}
-		this.blitOffset -= 50.0F;
+		this.blitOffset = model.isGui3d() ? this.blitOffset - 50.0F - seed : this.blitOffset - 50.0F;
 		ci.cancel();
 	}
 
-	private static boolean checkOverrideContains(final ItemOverrideList overrides, final ResourceLocation predicate) {
-		return overrides.getOverrides().stream().anyMatch(override -> override.predicates.containsKey(predicate));
+	private static boolean checkOverrideContains(final ItemOverrides overrides, final ResourceLocation predicate) {
+		return Arrays.asList(overrides.properties).contains(predicate);
 	}
 
 }

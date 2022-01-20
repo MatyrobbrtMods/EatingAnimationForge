@@ -46,7 +46,7 @@ mixin {
     debug.export = true
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 sourceSets {
 	main {
@@ -70,7 +70,7 @@ minecraft {
 
 	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    mappings channel: 'parchment', version: '2021.10.17-1.16.5'
+    mappings channel: 'official', version: '1.18.1'
   
     runs {
         client {
@@ -157,7 +157,7 @@ task makeChangelog(type: GitChangelogTask) {
 	file = file('changelog.html')
 	untaggedName = "Current release ${version}"
 	fromCommit = "${changelog_commit_start}"
-	toRef = '1.16.x'
+	toRef = '1.18.x'
 	templateContent = file('changelog.mustache').getText('UTF-8')
 }
 
@@ -193,7 +193,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.23'
+    minecraft 'net.minecraftforge:forge:1.18.1-39.0.45'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }

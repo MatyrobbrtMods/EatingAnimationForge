@@ -34,16 +34,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.RemotePlayer;
 
 import io.github.matyrobbrt.eatinganimation.EatingAnimation;
 
-@Mixin(RemoteClientPlayerEntity.class)
-public abstract class RemoteClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+@Mixin(RemotePlayer.class)
+public abstract class RemotePlayerMixin extends AbstractClientPlayer {
 
-	private RemoteClientPlayerEntityMixin(ClientWorld level, GameProfile profile) {
+	private RemotePlayerMixin(ClientLevel level, GameProfile profile) {
 		super(level, profile);
 	}
 
