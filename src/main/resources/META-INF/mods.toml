@@ -9,7 +9,7 @@ displayName="Eating Animation" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 #logoFile="examplemod.png" #optional
-credits="Thanks to Theoness1 for making the initial fabric mod" #optional
+credits="Thanks to Theoness1 for making the initial Fabric mod" #optional
 # A text field displayed in the mod UI
 authors="Matyrobbrt, Theoness1 (for the fabric version)" #optional
 # The description text for the mod (multi line!) (#mandatory)
@@ -20,11 +20,11 @@ description='''
     modId="forge" #mandatory
     mandatory=true #mandatory
     versionRange="[39,)" #mandatory
-    ordering="NONE"
+    ordering="BEFORE"
     side="BOTH"
 [[dependencies.examplemod]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.18.1,1.19)"
-    ordering="NONE"
+    ordering="BEFORE"
     side="BOTH"
