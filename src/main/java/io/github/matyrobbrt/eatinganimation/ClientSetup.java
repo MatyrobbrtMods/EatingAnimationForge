@@ -27,24 +27,83 @@
 
 package io.github.matyrobbrt.eatinganimation;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+import com.google.common.collect.Lists;
+
+import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.world.level.DataPackConfig;
 
+import io.github.matyrobbrt.eatinganimation.pack.ModCompatResourcePack;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.resource.DelegatingResourcePack;
 
 @SuppressWarnings("deprecation")
 public class ClientSetup {
 
     public ClientSetup(final IEventBus modBus) {
         modBus.addListener(this::onClientSetup);
+        modBus.addListener(this::onPackFinders);
+        modBus.addListener(this::onLoadComplete);
     }
 
     private void onClientSetup(final FMLClientSetupEvent event) {
         ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "eat"), EAT_PROPERTY);
         ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "eating"), EATING_PROPERTY);
+    }
+
+    private void onLoadComplete(final FMLLoadCompleteEvent event) {
+        if (!EatingAnimation.wasInstalledBefore) {
+            final var listBefore = Lists
+                    .newArrayList(Minecraft.getInstance().getResourcePackRepository().getSelectedIds());
+            if (listBefore.contains("mod:" + EatingAnimation.MOD_ID))
+                listBefore.remove("mod:" + EatingAnimation.MOD_ID);
+            // And now add us back, but at the top
+            listBefore.add("mod:" + EatingAnimation.MOD_ID);
+            Minecraft.getInstance().getResourcePackRepository().setSelected(listBefore);
+        }
+    }
+
+    private void onPackFinders(final AddPackFindersEvent event) {
+        if (event.getPackType() != PackType.CLIENT_RESOURCES)
+            return;
+        final Function<String, Path> fileGetter = name -> ModList.get().getModFileById(EatingAnimation.MOD_ID).getFile()
+                .findResource("compat", name);
+        event.addRepositorySource((source, factory) -> {
+            final List<PackResources> packs = new ArrayList<>();
+            for (final var mod : EatingAnimation.COMPATILE_MODS) {
+                if (ModList.get().isLoaded(mod)) {
+                    final var packName = "eatinganimations:compat/" + mod;
+                    packs.add(new ModCompatResourcePack(fileGetter.apply(mod), mod));
+                    DataPackConfig.DEFAULT.addModPacks(List.of(packName));
+                }
+            }
+            final var fullPack = Pack.create("eatinganimations_compat", false,
+                    () -> new DelegatingResourcePack("eatinganimations_compat", "EatingAnimations Compat",
+                            new PackMetadataSection(new TranslatableComponent("eatinganimations.resources.compat"),
+                                    PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())),
+                            packs),
+                    factory, Pack.Position.TOP, PackSource.DEFAULT);
+            source.accept(fullPack);
+        });
     }
 
     public static final ItemPropertyFunction EAT_PROPERTY = (stack, world, entity, i) -> {

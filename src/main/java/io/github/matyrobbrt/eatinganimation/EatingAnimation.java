@@ -27,7 +27,11 @@
 
 package io.github.matyrobbrt.eatinganimation;
 
+import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.compress.utils.Sets;
 
 import com.google.common.collect.Lists;
 
@@ -41,12 +45,15 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.NetworkConstants;
 
 @Mod(EatingAnimation.MOD_ID)
 public class EatingAnimation {
 
     public static float animationTicks = 0;
+
+    public static final Set<String> COMPATILE_MODS = Sets.newHashSet("duckling");
 
     public static final List<Item> ANIMATED_FOOD = Lists.newArrayList(Items.APPLE, Items.BAKED_POTATO, Items.BEEF,
             Items.BEETROOT, Items.CARROT, Items.CHICKEN, Items.BREAD, Items.CHORUS_FRUIT, Items.COD, Items.COOKED_BEEF,
@@ -59,11 +66,18 @@ public class EatingAnimation {
 
     public static final String MOD_ID = "eatinganimation";
 
+    public static boolean wasInstalledBefore;
+
     public EatingAnimation() {
-        ModLoadingContext.get().registerConfig(Type.CLIENT, Config.SPEC, EatingAnimation.MOD_ID + "-client.toml");
+        final var configName = EatingAnimation.MOD_ID + "-client.toml";
+        if (Files.exists(FMLPaths.CONFIGDIR.relative().resolve(configName).toAbsolutePath()))
+            wasInstalledBefore = true;
+        ModLoadingContext.get().registerConfig(Type.CLIENT, Config.SPEC, configName);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
                 () -> () -> new ClientSetup(FMLJavaModLoadingContext.get().getModEventBus()));
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
                 () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+
     }
+
 }
