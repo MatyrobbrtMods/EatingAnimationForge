@@ -30,8 +30,10 @@ package io.github.matyrobbrt.eatinganimation;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.commons.compress.utils.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -41,6 +43,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
@@ -53,7 +56,7 @@ public class EatingAnimation {
 
     public static float animationTicks = 0;
 
-    public static final Set<String> COMPATILE_MODS = Sets.newHashSet("duckling");
+    public static Set<String> compatibleMods;
 
     public static final List<Item> ANIMATED_FOOD = Lists.newArrayList(Items.APPLE, Items.BAKED_POTATO, Items.BEEF,
             Items.BEETROOT, Items.CARROT, Items.CHICKEN, Items.BREAD, Items.CHORUS_FRUIT, Items.COD, Items.COOKED_BEEF,
@@ -65,6 +68,7 @@ public class EatingAnimation {
             Items.SWEET_BERRIES, Items.TROPICAL_FISH, Items.ENCHANTED_GOLDEN_APPLE, Items.GLOW_BERRIES);
 
     public static final String MOD_ID = "eatinganimation";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static boolean wasInstalledBefore;
 
@@ -78,6 +82,16 @@ public class EatingAnimation {
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
                 () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 
+        final var file = ModList.get().getModFileById(MOD_ID).getFile().findResource("compat");
+        try {
+            compatibleMods = Files.walk(file, 1).map(path -> file.relativize(path))
+                    .filter(path -> path.getNameCount() > 0) // skip the root entry
+                    .map(p -> p.toString().replaceAll("/$", "")) // remove the trailing slash, if present
+                    .collect(Collectors.toSet());
+        } catch (Exception e) {
+            LOGGER.error("Exception trying to resolve compatible mods: ", e);
+            compatibleMods = Set.of();
+        }
     }
 
 }

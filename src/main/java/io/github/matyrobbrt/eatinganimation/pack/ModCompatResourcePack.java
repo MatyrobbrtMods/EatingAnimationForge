@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
@@ -172,6 +173,7 @@ public final class ModCompatResourcePack extends AbstractPackResources {
             this.defaultModel = defaultModel;
         }
 
+        @SerializedName("layer0")
         public String defaultModel;
         public float[] values = {
                 0.35f, 0.70f, 0.90f

@@ -89,7 +89,7 @@ public class ClientSetup {
                 .findResource("compat", name);
         event.addRepositorySource((source, factory) -> {
             final List<PackResources> packs = new ArrayList<>();
-            for (final var mod : EatingAnimation.COMPATILE_MODS) {
+            for (final var mod : EatingAnimation.compatibleMods) {
                 if (ModList.get().isLoaded(mod)) {
                     final var packName = "eatinganimations:compat/" + mod;
                     packs.add(new ModCompatResourcePack(fileGetter.apply(mod), mod));
