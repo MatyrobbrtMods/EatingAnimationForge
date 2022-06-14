@@ -216,6 +216,7 @@ jar {
             "MixinConfigs": "eatinganimation.mixins.json"
         ])
     }
+    exclude 'io/github/matyrobbrt/eatinganimation/Mover'
     destinationDirectory = file("$rootDir/build-out/${mc_version}/")
 }
 
