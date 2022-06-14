@@ -1,0 +1,30 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "item/potion_overlay",
+		"layer1": "item/potion"
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"eatinganimation:drinking": 1,
+				"eatinganimation:drink": 0.35
+			},
+			"model": "eatinganimation:item/potion_overlay_drinking_0"
+		},
+		{
+			"predicate": {
+				"eatinganimation:drinking": 1,
+				"eatinganimation:drink": 0.70
+			},
+			"model": "eatinganimation:item/potion_overlay_drinking_1"
+		},
+		{
+			"predicate": {
+				"eatinganimation:drinking": 1,
+				"eatinganimation:drink": 0.90
+			},
+			"model": "eatinganimation:item/potion_overlay_drinking_2"
+		}
+	]
+}

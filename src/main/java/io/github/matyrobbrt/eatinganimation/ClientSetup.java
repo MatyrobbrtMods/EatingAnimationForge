@@ -46,6 +46,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.DataPackConfig;
 
 import io.github.matyrobbrt.eatinganimation.pack.ModCompatResourcePack;
@@ -68,6 +69,9 @@ public class ClientSetup {
     private void onClientSetup(final FMLClientSetupEvent event) {
         ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "eat"), EAT_PROPERTY);
         ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "eating"), EATING_PROPERTY);
+
+        ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "drink"), DRINK_PROPERTY);
+        ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "drinking"), DRINKING_PROPERTY);
     }
 
     private void onLoadComplete(final FMLLoadCompleteEvent event) {
@@ -107,7 +111,8 @@ public class ClientSetup {
     }
 
     public static final ItemPropertyFunction EAT_PROPERTY = (stack, world, entity, i) -> {
-        if (entity == null) { return 0.0F; }
+        if (entity == null)
+            return 0.0F;
         if (entity instanceof RemotePlayer && entity.getTicksUsingItem() > 31) {
             return EatingAnimation.animationTicks / 30;
         }
@@ -116,8 +121,25 @@ public class ClientSetup {
     };
 
     private static final ItemPropertyFunction EATING_PROPERTY = (stack, world, entity, i) -> {
-        if (entity == null) { return 0.0F; }
-        return entity.isUsingItem() && entity.getUseItem() == stack ? 1 : 0;
+        if (entity == null)
+            return 0.0F;
+        return entity.isUsingItem() && entity.getUseItem() == stack && stack.getItem().isEdible() ? 1 : 0;
+    };
+
+    public static final ItemPropertyFunction DRINK_PROPERTY = (itemStack, clientWorld, livingEntity, i) -> {
+        if (livingEntity == null)
+            return 0.0F;
+
+        return livingEntity.getUseItem() != itemStack ? 0.0F
+                : (itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / 30.0F;
+    };
+
+    private static final ItemPropertyFunction DRINKING_PROPERTY = (itemStack, clientWorld, livingEntity, i) -> {
+        if (livingEntity == null)
+            return 0.0F;
+
+        return livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack
+                && itemStack.getItem().getUseAnimation(itemStack) == UseAnim.DRINK ? 1.0F : 0.0F;
     };
 
 }

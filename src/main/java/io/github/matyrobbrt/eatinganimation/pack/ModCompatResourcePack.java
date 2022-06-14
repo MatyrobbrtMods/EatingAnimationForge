@@ -51,10 +51,10 @@ public final class ModCompatResourcePack extends AbstractPackResources {
 
         for (final var name : itemNames) {
             final var propsFile = path.resolve(name).resolve("properties.json");
-            Properties props;
+            Properties props = null;
             if (Files.exists(propsFile))
-                props = GSON.fromJson(readString(path), Properties.class);
-            else
+                props = readProps(propsFile);
+            if (props == null)
                 props = new Properties(namespace + ":item/" + name);
             final var itemModel = ItemModelGenerator.generateItemModel(name, namespace, props.defaultModel,
                     props.values);
@@ -78,11 +78,13 @@ public final class ModCompatResourcePack extends AbstractPackResources {
         return new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static String readString(Path path) {
-        try {
-            return Files.readString(path);
+    private static Properties readProps(Path path) {
+        try (final var is = Files.newInputStream(path)) {
+            final var str = org.apache.commons.io.IOUtils.toString(is, StandardCharsets.UTF_8);
+            return GSON.fromJson(str, Properties.class);
         } catch (Exception e) {
-            return "";
+            EatingAnimation.LOGGER.error("Exception trying to read model properties file: {}", e);
+            return null;
         }
     }
 

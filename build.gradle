@@ -197,6 +197,7 @@ dependencies {
 
     runtimeOnly fg.deobf('curse.maven:duckling-597248:3802193')
     runtimeOnly fg.deobf('curse.maven:geckolib-388172:3827265')
+    runtimeOnly fg.deobf('curse.maven:farmersdelight-398521:3784851')
     
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }
