@@ -38,27 +38,27 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 @SuppressWarnings("deprecation")
 public class ClientSetup {
 
-	public ClientSetup(final IEventBus modBus) {
-		modBus.addListener(this::onClientSetup);
-	}
+    public ClientSetup(final IEventBus modBus) {
+        modBus.addListener(this::onClientSetup);
+    }
 
-	private void onClientSetup(final FMLClientSetupEvent event) {
-		ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "eat"), EAT_PROPERTY);
-		ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "eating"), EATING_PROPERTY);
-	}
+    private void onClientSetup(final FMLClientSetupEvent event) {
+        ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "eat"), EAT_PROPERTY);
+        ItemProperties.registerGeneric(new ResourceLocation(EatingAnimation.MOD_ID, "eating"), EATING_PROPERTY);
+    }
 
-	public static final ItemPropertyFunction EAT_PROPERTY = (stack, world, entity, i) -> {
-		if (entity == null) { return 0.0F; }
-		if (entity instanceof RemotePlayer && entity.getTicksUsingItem() > 31) {
-			return EatingAnimation.animationTicks / 30;
-		}
-		return entity.getUseItem() != stack ? 0.0F
-				: (stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 30.0F;
-	};
+    public static final ItemPropertyFunction EAT_PROPERTY = (stack, world, entity, i) -> {
+        if (entity == null) { return 0.0F; }
+        if (entity instanceof RemotePlayer && entity.getTicksUsingItem() > 31) {
+            return EatingAnimation.animationTicks / 30;
+        }
+        return entity.getUseItem() != stack ? 0.0F
+                : (stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 30.0F;
+    };
 
-	private static final ItemPropertyFunction EATING_PROPERTY = (stack, world, entity, i) -> {
-		if (entity == null) { return 0.0F; }
-		return entity.isUsingItem() && entity.getUseItem() == stack ? 1 : 0;
-	};
+    private static final ItemPropertyFunction EATING_PROPERTY = (stack, world, entity, i) -> {
+        if (entity == null) { return 0.0F; }
+        return entity.isUsingItem() && entity.getUseItem() == stack ? 1 : 0;
+    };
 
 }

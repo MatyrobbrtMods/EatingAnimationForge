@@ -53,8 +53,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import io.github.matyrobbrt.eatinganimation.EatingAnimation;
-import io.github.matyrobbrt.eatinganimation.EatingAnimation.Config;
 
+// This is so broken...
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin implements ResourceManagerReloadListener {
 
@@ -84,7 +84,7 @@ public abstract class ItemRendererMixin implements ResourceManagerReloadListener
 			int seed,
 			CallbackInfo ci) {
 		if (stack.isEmpty() || !stack.isEdible() || entity == null
-				|| Boolean.TRUE.equals(Config.RENDER_INVENTORY_EATING.get())) {
+				 /* || Boolean.TRUE.equals(Config.RENDER_INVENTORY_EATING.get()) */) {
 			return;
 		}
 		if (entity.getUseItem() != stack) { return; }
