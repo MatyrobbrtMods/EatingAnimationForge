@@ -43,7 +43,7 @@ public class EatingAnimationDatagen {
 	public static void gatherData(final net.minecraftforge.forge.event.lifecycle.GatherDataEvent event) {
 		final DataGenerator gen = event.getGenerator();
 		final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-		gen.addProvider(new ItemModelsProvider(gen, existingFileHelper));
+        gen.addProvider(event.includeClient(), new ItemModelsProvider(gen, existingFileHelper));
 	}
 
 }

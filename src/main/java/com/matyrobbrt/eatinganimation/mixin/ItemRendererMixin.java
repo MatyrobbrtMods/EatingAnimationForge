@@ -54,6 +54,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import net.minecraftforge.registries.ForgeRegistries;
+
 // This is so broken...
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin implements ResourceManagerReloadListener {
@@ -99,7 +101,8 @@ public abstract class ItemRendererMixin implements ResourceManagerReloadListener
 			crashreportcategory.setDetail("Item Type", () -> {
 				return String.valueOf(stack.getItem());
 			});
-			crashreportcategory.setDetail("Registry Name", () -> String.valueOf(stack.getItem().getRegistryName()));
+            crashreportcategory.setDetail("Registry Name",
+                    () -> String.valueOf(ForgeRegistries.ITEMS.getKey(stack.getItem())));
 			crashreportcategory.setDetail("Item Damage", () -> {
 				return String.valueOf(stack.getDamageValue());
 			});

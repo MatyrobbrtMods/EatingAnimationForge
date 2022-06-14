@@ -38,25 +38,26 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.entity.player.ProfilePublicKey;
 
 @Mixin(RemotePlayer.class)
 public abstract class RemotePlayerMixin extends AbstractClientPlayer {
 
-	private RemotePlayerMixin(ClientLevel level, GameProfile profile) {
-		super(level, profile);
-	}
+    private RemotePlayerMixin(ClientLevel p_234112_, GameProfile p_234113_, ProfilePublicKey p_234114_) {
+        super(p_234112_, p_234113_, p_234114_);
+    }
 
-	@Inject(at = @At("HEAD"), method = "tick")
-	private void eatinganimation$tickEatingAnimation(CallbackInfo ci) {
-		if (this.getTicksUsingItem() > 31) {
-			// Increase the static animation ticks field, for rendering the model in
-			// multi-player
-			if (EatingAnimation.animationTicks < 31) {
-				++EatingAnimation.animationTicks;
-			} else {
-				EatingAnimation.animationTicks = 0;
-			}
-		}
-	}
+    @Inject(at = @At("HEAD"), method = "tick")
+    private void eatinganimation$tickEatingAnimation(CallbackInfo ci) {
+        if (this.getTicksUsingItem() > 31) {
+            // Increase the static animation ticks field, for rendering the model in
+            // multi-player
+            if (EatingAnimation.animationTicks < 31) {
+                ++EatingAnimation.animationTicks;
+            } else {
+                EatingAnimation.animationTicks = 0;
+            }
+        }
+    }
 
 }

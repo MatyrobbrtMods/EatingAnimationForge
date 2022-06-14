@@ -106,8 +106,9 @@ public final class ModCompatResourcePack extends AbstractPackResources {
     }
 
     @Override
+    // TODO pathIn.. we should use it
     public Collection<ResourceLocation> getResources(PackType type, String resourceNamespace, String pathIn,
-            int maxDepth, Predicate<String> filter) {
+            Predicate<ResourceLocation> p_215342_) {
         if (type != PackType.CLIENT_RESOURCES || !resourceNamespace.equals(EatingAnimation.MOD_ID)
                 || !resourceNamespace.equals(namespace))
             return Collections.emptyList();
@@ -130,7 +131,7 @@ public final class ModCompatResourcePack extends AbstractPackResources {
                 }
             }
             return locations.stream();
-        }).toList();
+        }).filter(p_215342_).toList();
     }
 
     @Override

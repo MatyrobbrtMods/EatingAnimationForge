@@ -40,7 +40,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
@@ -102,7 +102,7 @@ public class ClientSetup {
             }
             final var fullPack = Pack.create("eatinganimations_compat", false,
                     () -> new DelegatingResourcePack("eatinganimations_compat", "EatingAnimations Compat",
-                            new PackMetadataSection(new TranslatableComponent("eatinganimations.resources.compat"),
+                            new PackMetadataSection(Component.translatable("eatinganimations.resources.compat"),
                                     PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())),
                             packs),
                     factory, Pack.Position.TOP, PackSource.DEFAULT);
