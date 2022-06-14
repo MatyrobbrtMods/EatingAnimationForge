@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-package io.github.matyrobbrt.eatinganimation;
+package com.matyrobbrt.eatinganimation;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.google.common.collect.Lists;
+import com.matyrobbrt.eatinganimation.pack.ModCompatResourcePack;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
@@ -49,7 +50,6 @@ import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.DataPackConfig;
 
-import io.github.matyrobbrt.eatinganimation.pack.ModCompatResourcePack;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;

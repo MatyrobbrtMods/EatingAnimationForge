@@ -1,4 +1,4 @@
-package io.github.matyrobbrt.eatinganimation.pack;
+package com.matyrobbrt.eatinganimation.pack;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -19,16 +19,15 @@ import java.util.function.Predicate;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.matyrobbrt.eatinganimation.EatingAnimation;
+import com.matyrobbrt.eatinganimation.datagen.ItemModelGenerator;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackType;
 
-import static io.github.matyrobbrt.eatinganimation.EatingAnimation.MOD_ID;
-
-import io.github.matyrobbrt.eatinganimation.EatingAnimation;
-import io.github.matyrobbrt.eatinganimation.datagen.ItemModelGenerator;
+import static com.matyrobbrt.eatinganimation.EatingAnimation.MOD_ID;
 
 public final class ModCompatResourcePack extends AbstractPackResources {
 

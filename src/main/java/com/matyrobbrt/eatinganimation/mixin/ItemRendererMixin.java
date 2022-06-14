@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-package io.github.matyrobbrt.eatinganimation.mixin;
+package com.matyrobbrt.eatinganimation.mixin;
 
 import java.util.Arrays;
 
@@ -37,6 +37,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.matyrobbrt.eatinganimation.EatingAnimation;
 
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -51,8 +53,6 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-
-import io.github.matyrobbrt.eatinganimation.EatingAnimation;
 
 // This is so broken...
 @Mixin(ItemRenderer.class)

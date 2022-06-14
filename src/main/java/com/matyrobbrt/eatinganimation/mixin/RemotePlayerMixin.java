@@ -25,20 +25,19 @@
  * SOFTWARE.
  */
 
-package io.github.matyrobbrt.eatinganimation.mixin;
+package com.matyrobbrt.eatinganimation.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.matyrobbrt.eatinganimation.EatingAnimation;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.RemotePlayer;
-
-import io.github.matyrobbrt.eatinganimation.EatingAnimation;
 
 @Mixin(RemotePlayer.class)
 public abstract class RemotePlayerMixin extends AbstractClientPlayer {

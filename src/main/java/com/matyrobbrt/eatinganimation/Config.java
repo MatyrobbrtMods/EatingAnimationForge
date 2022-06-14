@@ -1,4 +1,4 @@
-package io.github.matyrobbrt.eatinganimation;
+package com.matyrobbrt.eatinganimation;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;

@@ -25,4 +25,4 @@
  * SOFTWARE.
  */
 
-package io.github.matyrobbrt.eatinganimation.datagen;
+package com.matyrobbrt.eatinganimation.datagen;

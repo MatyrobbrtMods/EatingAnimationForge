@@ -1,6 +1,6 @@
-package io.github.matyrobbrt.eatinganimation.datagen;
+package com.matyrobbrt.eatinganimation.datagen;
 
-import io.github.matyrobbrt.eatinganimation.EatingAnimation;
+import com.matyrobbrt.eatinganimation.EatingAnimation;
 
 public class ItemModelGenerator {
 
@@ -13,12 +13,6 @@ public class ItemModelGenerator {
     public static String generateAnimationModel(String itemName, String modNamespace, int index) {
         return "{\"parent\":\"item/generated\",\"textures\":{\"layer0\":\"%s:item/%s/%s_%s\"}}"
                 .formatted(EatingAnimation.MOD_ID, modNamespace, itemName, index);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(generateItemModel("test", "myNamespace", "hello:kek", new float[] {
-                0.1f, 0.2f, 0.3f
-        }));
     }
 
 }

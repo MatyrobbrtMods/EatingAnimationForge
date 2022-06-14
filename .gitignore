@@ -25,4 +25,4 @@ run
 forge*changelog.txt
 .env
 build-out/
-src/main/java/io/github/matyrobbrt/eatinganimation/Mover.java
+src/main/java/com/matyrobbrt/eatinganimation/Mover.java

@@ -25,20 +25,20 @@
  * SOFTWARE.
  */
 
-package io.github.matyrobbrt.eatinganimation.datagen;
-
-import static io.github.matyrobbrt.eatinganimation.EatingAnimation.MOD_ID;
+package com.matyrobbrt.eatinganimation.datagen;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.matyrobbrt.eatinganimation.EatingAnimation;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
-import io.github.matyrobbrt.eatinganimation.EatingAnimation;
+import static com.matyrobbrt.eatinganimation.EatingAnimation.MOD_ID;
+
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;

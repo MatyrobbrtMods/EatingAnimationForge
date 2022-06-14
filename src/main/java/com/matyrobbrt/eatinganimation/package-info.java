@@ -25,24 +25,4 @@
  * SOFTWARE.
  */
 
-package io.github.matyrobbrt.eatinganimation.datagen;
-
-import net.minecraft.data.DataGenerator;
-
-import io.github.matyrobbrt.eatinganimation.EatingAnimation;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-
-@Mod.EventBusSubscriber(modid = EatingAnimation.MOD_ID, bus = Bus.MOD)
-public class EatingAnimationDatagen {
-
-	@SubscribeEvent
-	public static void gatherData(final net.minecraftforge.forge.event.lifecycle.GatherDataEvent event) {
-		final DataGenerator gen = event.getGenerator();
-		final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-		gen.addProvider(new ItemModelsProvider(gen, existingFileHelper));
-	}
-
-}
+package com.matyrobbrt.eatinganimation;

@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-package io.github.matyrobbrt.eatinganimation;
+package com.matyrobbrt.eatinganimation;
 
 import java.nio.file.Files;
 import java.util.List;

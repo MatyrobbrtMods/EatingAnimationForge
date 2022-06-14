@@ -25,4 +25,4 @@
  * SOFTWARE.
  */
 
-package io.github.matyrobbrt.eatinganimation.mixin;
+package com.matyrobbrt.eatinganimation.mixin;
