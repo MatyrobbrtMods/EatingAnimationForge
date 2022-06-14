@@ -55,8 +55,9 @@ public final class ModCompatResourcePack extends AbstractPackResources {
             if (Files.exists(propsFile))
                 props = readProps(propsFile);
             if (props == null)
-                props = new Properties(namespace + ":item/" + name);
-            final var itemModel = ItemModelGenerator.generateItemModel(name, namespace, props.defaultModel,
+                props = new Properties();
+            final var itemModel = ItemModelGenerator.generateItemModel(name, namespace,
+                    props.resolveModel(namespace + ":item/" + name),
                     props.values);
             resources.put("assets/" + namespace + "/models/item/" + name + ".json", () -> toIs(itemModel));
             for (int i = 0; i < NUMBER_OF_MODELS; i++) {
@@ -167,19 +168,15 @@ public final class ModCompatResourcePack extends AbstractPackResources {
 
     public final class Properties {
 
-        public Properties() {
-
-        }
-
-        public Properties(String defaultModel) {
-            this.defaultModel = defaultModel;
-        }
-
         @SerializedName("layer0")
         public String defaultModel;
         public float[] values = {
                 0.35f, 0.70f, 0.90f
         };
+
+        public String resolveModel(String fallback) {
+            return defaultModel == null ? fallback : defaultModel;
+        }
     }
 
     interface IOSupplier {
