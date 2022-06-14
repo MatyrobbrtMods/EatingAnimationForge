@@ -9,16 +9,16 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-		classpath 'org.parchmentmc:librarian:1.+'
+        classpath 'org.parchmentmc:librarian:1.+'
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-		classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 
 plugins {
-	id 'org.cadixdev.licenser' version '0.6.1'
-	id 'com.matthewprenger.cursegradle' version '1.4.0'
-	id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '1.71.4'
+    id 'org.cadixdev.licenser' version '0.6.1'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '1.71.4'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -33,9 +33,9 @@ archivesBaseName = "${mod_id}-${mc_version}"
 
 def props = new Properties()
 if (file(".env").exists()) {
-	file(".env").withInputStream { props.load(it) }
+    file(".env").withInputStream { props.load(it) }
 } else {
-	file("default.env").withInputStream { props.load(it) }
+    file("default.env").withInputStream { props.load(it) }
 }
 
 mixin {
@@ -49,26 +49,26 @@ mixin {
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 sourceSets {
-	main {
-		java {
-			srcDirs = [
-				"$rootDir/src/main/java"
-			]
-		}
-		resources {
-			srcDirs = [
-				"$rootDir/src/main/resources",
-				"$rootDir/src/generated/resources"
-			]
-			exclude '.cache'
-		}
-	}
+    main {
+        java {
+            srcDirs = [
+                "$rootDir/src/main/java"
+            ]
+        }
+        resources {
+            srcDirs = [
+                "$rootDir/src/main/resources",
+                "$rootDir/src/generated/resources"
+            ]
+            exclude '.cache'
+        }
+    }
 }
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
 
-	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     mappings channel: 'official', version: '1.18.1'
   
@@ -112,92 +112,92 @@ minecraft {
 }
 
 license {
-	header = file("$rootDir/header.txt")
-	properties {
+    header = file("$rootDir/header.txt")
+    properties {
         name = 'Matyrobbrt'
         year = 2022
     }
 
-	include '**/*.java'
-	
-	style {
-    	java = 'JAVADOC'
+    include '**/*.java'
+    
+    style {
+        java = 'JAVADOC'
     }
 
     tasks {
-    	main {
-    		files.from files("$rootDir/src/main/java")
-    	}
+        main {
+            files.from files("$rootDir/src/main/java")
+        }
     }
 }
 
 
 def replaceResources = tasks.register("replaceResources", Copy) {
-	it.outputs.upToDateWhen { false }
-	//Copy it into the build dir
-	it.from(sourceSets.main.resources) {
-		include "META-INF/mods.toml"
-		expand 'version': version
-	}
-	it.into "$buildDir/resources/main/"
+    it.outputs.upToDateWhen { false }
+    //Copy it into the build dir
+    it.from(sourceSets.main.resources) {
+        include "META-INF/mods.toml"
+        expand 'version': version
+    }
+    it.into "$buildDir/resources/main/"
 }
 
 classes.configure {
-	dependsOn(replaceResources)
+    dependsOn(replaceResources)
 }
 
 processResources {
-	duplicatesStrategy(DuplicatesStrategy.WARN)
-	exclude('META-INF/mods.toml')
-	configure { finalizedBy(replaceResources) }
+    duplicatesStrategy(DuplicatesStrategy.WARN)
+    exclude('META-INF/mods.toml')
+    configure { finalizedBy(replaceResources) }
 }
 
 task makeChangelog(type: GitChangelogTask) {
-	fromRepo = file("$projectDir")
-	file = file('changelog.html')
-	untaggedName = "Current release ${version}"
-	fromCommit = "${changelog_commit_start}"
-	toRef = '1.18.x'
-	templateContent = file('changelog.mustache').getText('UTF-8')
+    fromRepo = file("$projectDir")
+    file = file('changelog.html')
+    untaggedName = "Current release ${version}"
+    fromCommit = "${changelog_commit_start}"
+    toRef = '1.18.x'
+    templateContent = file('changelog.mustache').getText('UTF-8')
 }
 
 curseforge {
-	apiKey = props.getProperty('CURSEFORGE_KEY')
-	project {
-		id = "${curse_project_id}"
-		changelog = file('changelog.html')
-		changelogType = 'html'
-		releaseType = "${release_type}"
-		addGameVersion "${mc_version}"
-	}
+    apiKey = props.getProperty('CURSEFORGE_KEY')
+    project {
+        id = "${curse_project_id}"
+        changelog = file('changelog.html')
+        changelogType = 'html'
+        releaseType = "${release_type}"
+        addGameVersion "${mc_version}"
+    }
 }
 
 afterEvaluate {
-	// tasks.curseforge556554.dependsOn makeChangelog
+    // tasks.curseforge556554.dependsOn makeChangelog
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-	maven {
-		url "https://dl.cloudsmith.io/public/matyrobbrt/matylib/maven/"
-	}
-	maven {
-	   	name 'tterrag maven'
-	   	url "http://maven.tterrag.com/"
-	   	allowInsecureProtocol = true
-	}
-	maven {
-		url "https://www.cursemaven.com"
-	}
+    maven {
+        url "https://dl.cloudsmith.io/public/matyrobbrt/matylib/maven/"
+    }
+    maven {
+        name 'tterrag maven'
+        url "http://maven.tterrag.com/"
+        allowInsecureProtocol = true
+    }
+    maven {
+        url "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.0'
+    minecraft "net.minecraftforge:forge:${mc_version}-40.1.0"
 
-    runtimeOnly fg.deobf('curse.maven:duckling-597248:3802193')
-    runtimeOnly fg.deobf('curse.maven:geckolib-388172:3827265')
-    runtimeOnly fg.deobf('curse.maven:farmersdelight-398521:3784851')
+//    runtimeOnly fg.deobf('curse.maven:duckling-597248:3802193')
+//    runtimeOnly fg.deobf('curse.maven:geckolib-388172:3827265')
+//    runtimeOnly fg.deobf('curse.maven:farmersdelight-398521:3784851')
     
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }
@@ -216,7 +216,8 @@ jar {
             "MixinConfigs": "eatinganimation.mixins.json"
         ])
     }
-    exclude 'com/matyrobbrt/eatinganimation/Mover'
+    exclude 'com/matyrobbrt/eatinganimation/Mover.class'
+    exclude 'com/matyrobbrt/eatinganimation/Mover$1.class'
     destinationDirectory = file("$rootDir/build-out/${mc_version}/")
 }
 
