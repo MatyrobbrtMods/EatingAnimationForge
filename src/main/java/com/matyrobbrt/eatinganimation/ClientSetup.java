@@ -55,7 +55,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.resource.DelegatingResourcePack;
+import net.minecraftforge.resource.DelegatingPackResources;
 
 @SuppressWarnings("deprecation")
 public class ClientSetup {
@@ -101,7 +101,7 @@ public class ClientSetup {
                 }
             }
             final var fullPack = Pack.create("eatinganimations_compat", false,
-                    () -> new DelegatingResourcePack("eatinganimations_compat", "EatingAnimations Compat",
+                    () -> new DelegatingPackResources("eatinganimations_compat", "EatingAnimations Compat",
                             new PackMetadataSection(Component.translatable("eatinganimations.resources.compat"),
                                     PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())),
                             packs),

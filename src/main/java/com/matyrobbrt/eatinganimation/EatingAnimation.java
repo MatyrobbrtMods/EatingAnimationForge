@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.matyrobbrt.eatinganimation.datagen.EatingAnimationDatagen;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +94,13 @@ public class EatingAnimation {
             LOGGER.error("Exception trying to resolve compatible mods: ", e);
             compatibleMods = Set.of();
         }
+
+        if (!FMLEnvironment.production) {
+            registerDatagen();
+        }
     }
 
+    private void registerDatagen() {
+        FMLJavaModLoadingContext.get().getModEventBus().register(EatingAnimationDatagen.class);
+    }
 }
