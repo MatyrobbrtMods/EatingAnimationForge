@@ -106,18 +106,7 @@ minecraft {
 
 license {
 	header = file("$rootDir/header.txt")
-	properties {
-        name = 'Matyrobbrt'
-        year = 2022
-    }
-
 	include '**/*.java'
-
-    tasks {
-    	main {
-    		files.from files("$rootDir/src/main/java")
-    	}
-    }
 }
 
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Matyrobbrt
+ * SPDX-License-Identifier: MIT
+ */
+
 package com.matyrobbrt.eatinganimation;
 
 import net.minecraftforge.common.ForgeConfigSpec;

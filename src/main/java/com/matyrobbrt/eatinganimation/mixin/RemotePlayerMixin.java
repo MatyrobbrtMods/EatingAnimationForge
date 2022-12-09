@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Matyrobbrt
+ * SPDX-License-Identifier: MIT
+ */
+
 package com.matyrobbrt.eatinganimation.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;

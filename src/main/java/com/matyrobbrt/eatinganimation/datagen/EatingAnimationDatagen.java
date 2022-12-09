@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Matyrobbrt
+ * SPDX-License-Identifier: MIT
+ */
+
 package com.matyrobbrt.eatinganimation.datagen;
 
 import net.minecraft.data.DataGenerator;
