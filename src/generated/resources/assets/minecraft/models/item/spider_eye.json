@@ -1,29 +1,29 @@
 {
   "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "minecraft:item/spider_eye"
-  },
   "overrides": [
     {
+      "model": "eatinganimation:item/spider_eye_eating_0",
       "predicate": {
-        "eatinganimation:eating": 1.0,
-        "eatinganimation:eat": 0.35
-      },
-      "model": "eatinganimation:item/spider_eye_eating_0"
+        "eatinganimation:eat": 0.35,
+        "eatinganimation:eating": 1.0
+      }
     },
     {
+      "model": "eatinganimation:item/spider_eye_eating_1",
       "predicate": {
-        "eatinganimation:eating": 1.0,
-        "eatinganimation:eat": 0.7
-      },
-      "model": "eatinganimation:item/spider_eye_eating_1"
+        "eatinganimation:eat": 0.7,
+        "eatinganimation:eating": 1.0
+      }
     },
     {
+      "model": "eatinganimation:item/spider_eye_eating_2",
       "predicate": {
-        "eatinganimation:eating": 1.0,
-        "eatinganimation:eat": 0.9
-      },
-      "model": "eatinganimation:item/spider_eye_eating_2"
+        "eatinganimation:eat": 0.9,
+        "eatinganimation:eating": 1.0
+      }
     }
-  ]
+  ],
+  "textures": {
+    "layer0": "minecraft:item/spider_eye"
+  }
 }

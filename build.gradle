@@ -31,13 +31,6 @@ version = "${version}"
 group = 'io.github.matyrobbrt.eatinganimation'
 archivesBaseName = "${mod_id}-${mc_version}"
 
-def props = new Properties()
-if (file(".env").exists()) {
-	file(".env").withInputStream { props.load(it) }
-} else {
-	file("default.env").withInputStream { props.load(it) }
-}
-
 mixin {
     add sourceSets.main, "eatinganimation.refmap.json"
     config "eatinganimation.mixins.json"
@@ -119,10 +112,6 @@ license {
     }
 
 	include '**/*.java'
-	
-	style {
-    	java = 'JAVADOC'
-    }
 
     tasks {
     	main {
@@ -162,7 +151,7 @@ task makeChangelog(type: GitChangelogTask) {
 }
 
 curseforge {
-	apiKey = props.getProperty('CURSEFORGE_KEY')
+	apiKey = project.getProperty('curseforgeKey')
 	project {
 		id = "${curse_project_id}"
 		changelog = file('changelog.html')
@@ -180,11 +169,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
 	maven {
-		url "https://dl.cloudsmith.io/public/matyrobbrt/matylib/maven/"
-	}
-	maven {
 	   	name 'tterrag maven'
-	   	url "http://maven.tterrag.com/"
+	   	url "https://maven.tterrag.com/"
 	   	allowInsecureProtocol = true
 	}
 	maven {
@@ -193,7 +179,7 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-41.1.0"
+    minecraft "net.minecraftforge:forge:${mc_version}-44.0.0"
 
 //    runtimeOnly fg.deobf('curse.maven:duckling-597248:3802193')
 //    runtimeOnly fg.deobf('curse.maven:geckolib-388172:3827265')
@@ -210,19 +196,16 @@ jar {
             "Specification-Vendor": "matyrobbrt",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": "eatinganimation",
-            "Implementation-Version": "${version}",
+            "Implementation-Version": project.version,
             "Implementation-Vendor" :"matyrobbrt",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             "MixinConfigs": "eatinganimation.mixins.json"
         ])
     }
-    exclude 'com/matyrobbrt/eatinganimation/Mover'
-	exclude 'com/matyrobbrt/eatinganimation/Mover$1'
     destinationDirectory = file("$rootDir/build-out/${mc_version}/")
 }
 
 jar.finalizedBy('reobfJar') 
-//publish.dependsOn('reobfJar')
 
 publishing {
     publications {

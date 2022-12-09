@@ -1,35 +1,9 @@
-/**
- * This file is part of the Eating Animation Minecraft mod and is licensed under
- * the MIT license:
- *
- * MIT License
- *
- * Copyright (c) 2022 Matyrobbrt
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package com.matyrobbrt.eatinganimation;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import com.google.common.collect.Lists;
@@ -47,6 +21,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.DataPackConfig;
 
@@ -76,10 +51,8 @@ public class ClientSetup {
 
     private void onLoadComplete(final FMLLoadCompleteEvent event) {
         if (!EatingAnimation.wasInstalledBefore) {
-            final var listBefore = Lists
-                    .newArrayList(Minecraft.getInstance().getResourcePackRepository().getSelectedIds());
-            if (listBefore.contains("mod:" + EatingAnimation.MOD_ID))
-                listBefore.remove("mod:" + EatingAnimation.MOD_ID);
+            final var listBefore = Lists.newArrayList(Minecraft.getInstance().getResourcePackRepository().getSelectedIds());
+            listBefore.remove("mod:" + EatingAnimation.MOD_ID);
             // And now add us back, but at the top
             listBefore.add("mod:" + EatingAnimation.MOD_ID);
             Minecraft.getInstance().getResourcePackRepository().setSelected(listBefore);
@@ -91,7 +64,7 @@ public class ClientSetup {
             return;
         final Function<String, Path> fileGetter = name -> ModList.get().getModFileById(EatingAnimation.MOD_ID).getFile()
                 .findResource("compat", name);
-        event.addRepositorySource((source, factory) -> {
+        event.addRepositorySource((source) -> {
             final List<PackResources> packs = new ArrayList<>();
             for (final var mod : EatingAnimation.compatibleMods) {
                 if (ModList.get().isLoaded(mod)) {
@@ -100,12 +73,20 @@ public class ClientSetup {
                     DataPackConfig.DEFAULT.addModPacks(List.of(packName));
                 }
             }
-            final var fullPack = Pack.create("eatinganimations_compat", false,
-                    () -> new DelegatingPackResources("eatinganimations_compat", "EatingAnimations Compat",
+
+            final var rpVersion = PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion());
+            final var dpVersion = PackType.SERVER_DATA.getVersion(SharedConstants.getCurrentVersion());
+
+            final var fullPack = Pack.create("eatinganimations_compat", Component.literal("Eating Animations Compat"),
+                    false,
+                    it -> new DelegatingPackResources("eatinganimations_compat", true,
                             new PackMetadataSection(Component.translatable("eatinganimations.resources.compat"),
-                                    PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())),
+                                    rpVersion, Map.of(PackType.CLIENT_RESOURCES, rpVersion, PackType.SERVER_DATA, dpVersion)),
                             packs),
-                    factory, Pack.Position.TOP, PackSource.DEFAULT);
+                    new Pack.Info(
+                            Component.translatable("eatinganimations.resources.compat"), dpVersion, rpVersion, FeatureFlags.DEFAULT_FLAGS, false
+                    ),
+                    PackType.CLIENT_RESOURCES, Pack.Position.TOP, false, PackSource.DEFAULT);
             source.accept(fullPack);
         });
     }
