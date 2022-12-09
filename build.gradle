@@ -5,7 +5,6 @@ buildscript {
         maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -19,6 +18,7 @@ plugins {
 	id 'org.cadixdev.licenser' version '0.6.1'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '1.71.4'
+    id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -30,6 +30,11 @@ apply plugin: 'org.spongepowered.mixin'
 version = "${version}"
 group = 'io.github.matyrobbrt.eatinganimation'
 archivesBaseName = "${mod_id}-${mc_version}"
+
+modsDotGroovy {
+    dslVersion = '1.2.0' // Can be replaced with any existing DSL version
+    platform 'forge'
+}
 
 mixin {
     add sourceSets.main, "eatinganimation.refmap.json"
@@ -110,26 +115,6 @@ license {
 }
 
 
-def replaceResources = tasks.register("replaceResources", Copy) {
-	it.outputs.upToDateWhen { false }
-	//Copy it into the build dir
-	it.from(sourceSets.main.resources) {
-		include "META-INF/mods.toml"
-		expand 'version': version
-	}
-	it.into "$buildDir/resources/main/"
-}
-
-classes.configure {
-	dependsOn(replaceResources)
-}
-
-processResources {
-	duplicatesStrategy(DuplicatesStrategy.WARN)
-	exclude('META-INF/mods.toml')
-	configure { finalizedBy(replaceResources) }
-}
-
 task makeChangelog(type: GitChangelogTask) {
 	fromRepo = file("$projectDir")
 	file = file('changelog.html')
@@ -153,8 +138,6 @@ curseforge {
 afterEvaluate {
 	// tasks.curseforge556554.dependsOn makeChangelog
 }
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
 	maven {
@@ -191,7 +174,6 @@ jar {
             "MixinConfigs": "eatinganimation.mixins.json"
         ])
     }
-    destinationDirectory = file("$rootDir/build-out/${mc_version}/")
 }
 
 jar.finalizedBy('reobfJar') 
