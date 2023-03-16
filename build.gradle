@@ -19,6 +19,7 @@ plugins {
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '1.71.4'
     id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
+    id 'groovy'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -32,14 +33,11 @@ group = 'io.github.matyrobbrt.eatinganimation'
 archivesBaseName = "${mod_id}-${mc_version}"
 
 modsDotGroovy {
-    dslVersion = '1.2.0' // Can be replaced with any existing DSL version
+    dslVersion = '1.3.0' // Can be replaced with any existing DSL version
     platform 'forge'
 }
 
 mixin {
-    add sourceSets.main, "eatinganimation.refmap.json"
-    config "eatinganimation.mixins.json"
-    
     debug.verbose = true
     debug.export = true
 }
@@ -73,7 +71,6 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run/client')
-            arg "-mixin.config=eatinganimation.mixins.json"
 
             mods {
                 eatinganimation {
@@ -84,7 +81,6 @@ minecraft {
 
         server {
             workingDirectory project.file('run/server')
-            arg "-mixin.config=eatinganimation.mixins.json"
 
             mods {
                 eatinganimation {
@@ -95,7 +91,6 @@ minecraft {
 
         data {
             workingDirectory project.file('run/client')
-            arg "-mixin.config=eatinganimation.mixins.json"
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             args '--mod', 'eatinganimation', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
@@ -112,16 +107,17 @@ minecraft {
 license {
 	header = file("$rootDir/header.txt")
 	include '**/*.java'
+	include '**/*.groovy'
 }
 
 
-task makeChangelog(type: GitChangelogTask) {
-	fromRepo = file("$projectDir")
-	file = file('changelog.html')
-	untaggedName = "Current release ${version}"
-	fromCommit = "${changelog_commit_start}"
-	toRef = '1.18.x'
-	templateContent = file('changelog.mustache').getText('UTF-8')
+tasks.register('makeChangelog') {
+    fromRepo = file("$projectDir")
+    file = file('changelog.html')
+    untaggedName = "Current release ${version}"
+    fromCommit = "${changelog_commit_start}"
+    toRef = '1.18.x'
+    templateContent = file('changelog.mustache').getText('UTF-8')
 }
 
 curseforge {
@@ -148,15 +144,24 @@ repositories {
 	maven {
 		url "https://www.cursemaven.com"
 	}
+    maven {
+        name = 'Modding Inquisition Releases'
+        url = 'https://maven.moddinginquisition.org/releases'
+    }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-44.0.0"
+    minecraft "net.minecraftforge:forge:${mc_version}-45.0.6"
 
 //    runtimeOnly fg.deobf('curse.maven:duckling-597248:3802193')
 //    runtimeOnly fg.deobf('curse.maven:geckolib-388172:3827265')
 //    runtimeOnly fg.deobf('curse.maven:farmersdelight-398521:3784851')
-    
+
+    compileOnly "com.matyrobbrt.gml:gml:${gml_version}"
+    runtimeOnly fg.deobf("com.matyrobbrt.gml:gml:${gml_version}:all") {
+        exclude module: 'transform'
+    }
+
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }
 
@@ -171,7 +176,6 @@ jar {
             "Implementation-Version": project.version,
             "Implementation-Vendor" :"matyrobbrt",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            "MixinConfigs": "eatinganimation.mixins.json"
         ])
     }
 }

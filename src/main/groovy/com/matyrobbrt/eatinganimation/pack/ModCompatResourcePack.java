@@ -5,37 +5,13 @@
 
 package com.matyrobbrt.eatinganimation.pack;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.SerializedName;
 import com.matyrobbrt.eatinganimation.EatingAnimation;
 import com.matyrobbrt.eatinganimation.datagen.ItemModelGenerator;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.FileUtil;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
@@ -45,6 +21,21 @@ import net.minecraft.server.packs.resources.IoSupplier;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.matyrobbrt.eatinganimation.EatingAnimation.MOD_ID;
 
@@ -84,7 +75,7 @@ public final class ModCompatResourcePack extends AbstractPackResources {
         }
 
         packMcMeta = "{\"pack\":{\"description\":\"EatingAnimations %s compatibility\",\"pack_format\":%s}}"
-                .formatted(namespace, PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion()))
+                .formatted(namespace, SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES))
                 .getBytes(StandardCharsets.UTF_8);
     }
 
