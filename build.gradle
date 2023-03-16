@@ -176,8 +176,6 @@ afterEvaluate {
     // tasks.curseforge556554.dependsOn makeChangelog
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
 repositories {
     maven {
         url "https://dl.cloudsmith.io/public/matyrobbrt/matylib/maven/"
