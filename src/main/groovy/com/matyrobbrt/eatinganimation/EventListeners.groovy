@@ -5,13 +5,13 @@
 
 package com.matyrobbrt.eatinganimation
 
-import com.matyrobbrt.gml.bus.EventBusSubscriber
-import com.matyrobbrt.gml.bus.type.ForgeBus
 import groovy.transform.CompileStatic
 import net.minecraft.client.player.RemotePlayer
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import org.groovymc.gml.bus.EventBusSubscriber
+import org.groovymc.gml.bus.type.ForgeBus
 
 @CompileStatic
 @EventBusSubscriber(value = ForgeBus, dist = [Dist.CLIENT])

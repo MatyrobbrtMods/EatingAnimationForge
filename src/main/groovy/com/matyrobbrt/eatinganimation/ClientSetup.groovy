@@ -7,8 +7,6 @@ package com.matyrobbrt.eatinganimation
 
 import com.google.common.collect.Lists
 import com.matyrobbrt.eatinganimation.pack.ModCompatResourcePack
-import com.matyrobbrt.gml.bus.EventBusSubscriber
-import com.matyrobbrt.gml.bus.type.ModBus
 import groovy.transform.CompileStatic
 import net.minecraft.SharedConstants
 import net.minecraft.client.Minecraft
@@ -35,6 +33,8 @@ import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent
 import net.minecraftforge.resource.DelegatingPackResources
+import org.groovymc.gml.bus.EventBusSubscriber
+import org.groovymc.gml.bus.type.ModBus
 
 import java.nio.file.Path
 import java.util.function.Function

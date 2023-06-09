@@ -5,7 +5,6 @@
 
 package com.matyrobbrt.eatinganimation
 
-import com.matyrobbrt.gml.GMod
 import groovy.transform.CompileStatic
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
@@ -13,6 +12,7 @@ import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.config.ModConfig.Type
 import net.minecraftforge.fml.loading.FMLPaths
+import org.groovymc.gml.GMod
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
