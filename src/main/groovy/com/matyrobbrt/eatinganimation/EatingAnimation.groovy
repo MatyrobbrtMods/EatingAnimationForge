@@ -8,10 +8,10 @@ package com.matyrobbrt.eatinganimation
 import groovy.transform.CompileStatic
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
-import net.minecraftforge.fml.ModList
-import net.minecraftforge.fml.ModLoadingContext
-import net.minecraftforge.fml.config.ModConfig.Type
-import net.minecraftforge.fml.loading.FMLPaths
+import net.neoforged.fml.ModList
+import net.neoforged.fml.ModLoadingContext
+import net.neoforged.fml.config.ModConfig
+import net.neoforged.fml.loading.FMLPaths
 import org.groovymc.gml.GMod
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -47,9 +47,10 @@ class EatingAnimation {
         if (Files.exists(FMLPaths.CONFIGDIR.relative().resolve(configName).toAbsolutePath()))
             wasInstalledBefore = true
 
-        ModLoadingContext.get().registerConfig(Type.CLIENT, Config.SPEC, configName)
+        final container = ModLoadingContext.get().activeContainer
+        container.registerConfig(ModConfig.Type.CLIENT, Config.SPEC, configName)
 
-        final var file = ModList.get().getModFileById(MOD_ID).getFile().findResource("compat");
+        final var file = ModList.get().getModFileById(container.modId).getFile().findResource("compat");
         try (final var stream = Files.walk(file, 1)) {
             compatibleMods = stream.map { file.relativize(it) }
                     .filter(path -> path.getNameCount() > 0) // skip the root entry

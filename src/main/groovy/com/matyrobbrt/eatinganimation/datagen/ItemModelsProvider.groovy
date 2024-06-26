@@ -11,10 +11,10 @@ import net.minecraft.data.DataGenerator
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
-import net.minecraftforge.client.model.generators.ItemModelBuilder
-import net.minecraftforge.client.model.generators.ItemModelProvider
-import net.minecraftforge.client.model.generators.ModelFile
-import net.minecraftforge.common.data.ExistingFileHelper
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider
+import net.neoforged.neoforge.client.model.generators.ModelFile
+import net.neoforged.neoforge.common.data.ExistingFileHelper
 
 import static com.matyrobbrt.eatinganimation.EatingAnimation.MOD_ID
 
@@ -48,9 +48,9 @@ class ItemModelsProvider extends ItemModelProvider {
         for (int i in 0..<eatProgress.length) {
             final modelName = "${item === Items.ENCHANTED_GOLDEN_APPLE ? "golden_apple" : BuiltInRegistries.ITEM.getKey(item).getPath()}_${item in DRINKABLES ? 'drinking' : 'eating'}_$i"
             final overrideModel = getBuilder(MOD_ID + ":" + modelName).parent(itemGenerated)
-                    .texture("layer0", new ResourceLocation(MOD_ID, "item/$modelName"))
-            builder.override().predicate(new ResourceLocation(MOD_ID, "eating"), 1)
-                    .predicate(new ResourceLocation(MOD_ID, "eat"), eatProgress[i]).model(overrideModel)
+                    .texture("layer0", ResourceLocation.fromNamespaceAndPath(MOD_ID, "item/$modelName"))
+            builder.override().predicate(ResourceLocation.fromNamespaceAndPath(MOD_ID, "eating"), 1)
+                    .predicate(ResourceLocation.fromNamespaceAndPath(MOD_ID, "eat"), eatProgress[i]).model(overrideModel)
         }
 
         builder

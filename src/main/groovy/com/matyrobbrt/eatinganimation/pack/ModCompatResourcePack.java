@@ -14,9 +14,12 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.SharedConstants;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.IoSupplier;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,8 +55,8 @@ public final class ModCompatResourcePack extends AbstractPackResources {
     private final Map<ResourceLocation, IoSupplier<InputStream>> resources = new HashMap<>();
     private final byte[] packMcMeta;
 
-    public ModCompatResourcePack(Path path, String namespace) {
-        super("eating_animations_compat_" + namespace, true);
+    public ModCompatResourcePack(PackLocationInfo locationInfo, Path path, String namespace) {
+        super(locationInfo);
         this.namespace = namespace;
 
         this.namespaces = Set.of(EatingAnimation.MOD_ID, namespace);
@@ -63,13 +66,13 @@ public final class ModCompatResourcePack extends AbstractPackResources {
             final var propsFile = path.resolve(name).resolve("properties.json");
             final var props = Optional.ofNullable(Files.exists(propsFile) ? readProps(propsFile) : null).orElse(new Properties(null));
             final var itemModel = ItemModelGenerator.generateItemModel(name, namespace, props.resolveModel(namespace + ":item/" + name), props.values);
-            resources.put(new ResourceLocation(namespace, "models/item/" + name + ".json"), () -> toIs(itemModel));
+            resources.put(ResourceLocation.fromNamespaceAndPath(namespace, "models/item/" + name + ".json"), () -> toIs(itemModel));
             for (int i = 0; i < NUMBER_OF_MODELS; i++) {
                 final var fullPath = path.resolve(name).resolve(i + ".png");
-                resources.put(new ResourceLocation(MOD_ID, "textures/item/" + namespace + "/" + name + "_" + i + ".png"),
+                resources.put(ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/item/" + namespace + "/" + name + "_" + i + ".png"),
                         () -> Files.newInputStream(fullPath));
                 final var animation = ItemModelGenerator.generateAnimationModel(name, namespace, i);
-                resources.put(new ResourceLocation(MOD_ID, "models/item/" + namespace + "/" + name + "_" + i + ".json"),
+                resources.put(ResourceLocation.fromNamespaceAndPath(MOD_ID, "models/item/" + namespace + "/" + name + "_" + i + ".json"),
                         () -> toIs(animation));
             }
         }
@@ -87,8 +90,7 @@ public final class ModCompatResourcePack extends AbstractPackResources {
     private static Properties readProps(Path path) {
         try (final Reader reader = Files.newBufferedReader(path)) {
             final JsonObject json = GSON.fromJson(reader, JsonObject.class);
-            return Properties.CODEC.decode(JsonOps.INSTANCE, json).getOrThrow(false, it -> {
-            }).getFirst();
+            return Properties.CODEC.decode(JsonOps.INSTANCE, json).getOrThrow().getFirst();
         } catch (Exception e) {
             EatingAnimation.LOGGER.error("Exception trying to read model properties file:", e);
             return null;
@@ -137,7 +139,7 @@ public final class ModCompatResourcePack extends AbstractPackResources {
     @Override
     public IoSupplier<InputStream> getRootResource(String... paths) {
         if (paths.length == 1 && paths[0].equals("pack.mcmeta")) return () -> new ByteArrayInputStream(packMcMeta);
-        return resources.get(new ResourceLocation(namespace, String.join("/", paths)));
+        return resources.get(ResourceLocation.fromNamespaceAndPath(namespace, String.join("/", paths)));
     }
 
     @Nullable

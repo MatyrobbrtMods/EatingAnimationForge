@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-ModsDotGroovy.make {
+NeoForgeModsDotGroovy.make {
     modLoader = 'gml'
     loaderVersion = '[1,)'
 
@@ -18,11 +18,10 @@ ModsDotGroovy.make {
         description = 'This mod adds simple sprite animation when you eat or drink something.'
         author = 'Matyrobbrt'
         credits = 'Theoness1 for the Fabric version'
-        displayTest = DisplayTest.IGNORE_ALL_VERSION
 
         dependencies {
-            forge = "[${this.forgeVersion},)"
-            minecraft = this.minecraftVersionRange
+            neoforge = ">=${platformVersion}"
+            minecraft = minecraftVersionRange
 
             mod('gml') {
                 versionRange = ">=${this.buildProperties['gml_version']}"
