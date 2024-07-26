@@ -46,6 +46,20 @@ neoForge {
     }
 }
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://cursemaven.com"
+            }
+        }
+        filter {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 dependencies {
     implementation "org.groovymc.gml:gml:${gml_version}"
+    runtimeOnly "curse.maven:farmers-delight-398521:5566383"
 }
