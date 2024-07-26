@@ -61,7 +61,7 @@ public final class ModCompatResourcePack extends AbstractPackResources {
 
         for (final var name : itemNames) {
             final var propsFile = path.resolve(name).resolve("properties.json");
-            final var props = Optional.ofNullable(Files.exists(propsFile) ? readProps(propsFile) : null).orElse(new Properties(null));
+            final var props = Optional.ofNullable(Files.exists(propsFile) ? readProps(propsFile) : null).orElse(new Properties(Optional.empty()));
             final var itemModel = ItemModelGenerator.generateItemModel(name, namespace, props.resolveModel(namespace + ":item/" + name), props.values);
             resources.put(new ResourceLocation(namespace, "models/item/" + name + ".json"), () -> toIs(itemModel));
             for (int i = 0; i < NUMBER_OF_MODELS; i++) {
@@ -115,12 +115,11 @@ public final class ModCompatResourcePack extends AbstractPackResources {
 
     @Override
     public void listResources(PackType type, String namespace, String path, ResourceOutput resourceOutput) {
-        if (type != PackType.CLIENT_RESOURCES || !namespace.equals(EatingAnimation.MOD_ID)
-                || !namespace.equals(this.namespace))
+        if (type != PackType.CLIENT_RESOURCES || (!namespace.equals(EatingAnimation.MOD_ID) && !namespace.equals(this.namespace)))
             return;
 
         resources.entrySet().stream()
-                .filter(it -> it.getKey().getNamespace().equals(namespace) && it.getKey().getNamespace().startsWith(path))
+                .filter(it -> it.getKey().getNamespace().equals(namespace) && it.getKey().getPath().startsWith(path))
                 .forEach(it -> resourceOutput.accept(it.getKey(), it.getValue()));
     }
 
@@ -147,18 +146,18 @@ public final class ModCompatResourcePack extends AbstractPackResources {
         return resources.get(location);
     }
 
-    public record Properties(@Nullable String defaultModel, List<Float> values) {
+    public record Properties(Optional<String> defaultModel, List<Float> values) {
         public static final Codec<Properties> CODEC = RecordCodecBuilder.create(in -> in.group(
-                Codec.STRING.fieldOf("layer0").forGetter(Properties::defaultModel),
+                Codec.STRING.optionalFieldOf("layer0").forGetter(Properties::defaultModel),
                 Codec.FLOAT.listOf().optionalFieldOf("values", List.of(0.35f, 0.70f, 0.90f)).forGetter(Properties::values)
         ).apply(in, Properties::new));
 
-        public Properties(@Nullable String defaultModel) {
+        public Properties(Optional<String> defaultModel) {
             this(defaultModel, List.of(0.35f, 0.70f, 0.90f));
         }
 
         public String resolveModel(String fallback) {
-            return defaultModel == null ? fallback : defaultModel;
+            return defaultModel.orElse(fallback);
         }
     }
 }

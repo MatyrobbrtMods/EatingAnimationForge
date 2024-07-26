@@ -21,8 +21,8 @@ ModsDotGroovy.make {
         displayTest = DisplayTest.IGNORE_ALL_VERSION
 
         dependencies {
-            forge = "[${this.forgeVersion},)"
-            minecraft = this.minecraftVersionRange
+            forge = "[46,)"
+            minecraft = '[1.20,)'
 
             mod('gml') {
                 versionRange = ">=${this.buildProperties['gml_version']}"
